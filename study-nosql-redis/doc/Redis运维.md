@@ -27,10 +27,10 @@
 1. 启动
 
    ```shell
-   #服务端
-   ./redis-server redis.conf --port
+   #服务端，配置文件必须为第一参数
+   ./redis-server redis.conf --port PORT
    #客户端
-   ./redis-cli -h [host] -p port -a [pass]
+   ./redis-cli -h [HOST] -p PORT -a [PASS]
    ```
 
 2. 停止
@@ -98,7 +98,9 @@
 port 6379
 #守护进程
 daemonize no
-#是否开启保护
+#
+requirepass abc
+#保护
 protected-mode no
 #pid文件
 pidfile /var/run/redis_6379.pid
