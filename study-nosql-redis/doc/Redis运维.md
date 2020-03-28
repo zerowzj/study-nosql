@@ -169,7 +169,14 @@ replica-ignore-maxmemory yes
 
 ## 3.1 RDB快照
 
-1. 编辑redis.cfg，修改以下配置
+​		RDB 触发机制分为使用指令手动触发和 redis.conf 配置自动触发。
+
+1. 手动触发
+
+   - save指令：该指令会阻塞当前 Redis 服务器，执行 save 指令期间，Redis 不能处理其他命令，直到 RDB 过程完成为止。
+   - bgsave：执行该命令时，Redis 会在后台异步执行快照操作，此时 Redis 仍然可以相应客户端请求。具体操作是 Redis 进程执行 `fork` 操作创建子进程，RDB 持久化过程由子进程负责，完成后自动结束。Redis 只会在 `fork` 期间发生阻塞，但是一般时间都很短。但是如果 Redis 数据量特别大，`fork` 时间就会变长，而且占用内存会加倍，这一点需要特别注意
+
+2. 自动触发，编辑redis.cfg，修改以下配置
 
    ```shell
    #### rdb开启 ###
@@ -193,7 +200,7 @@ replica-ignore-maxmemory yes
    dir ./
    ```
 
-2. 关闭RDB
+3. 关闭RDB
 
    ```shell
    save ""
@@ -208,7 +215,7 @@ replica-ignore-maxmemory yes
    appendonly no
    
    ### aof配置 ###
-   #每1个命令,都立即同步到AOF，安全,速度慢
+   #同步策略
    appendfsync always
    #正在导出rdb快照的过程中，是否停止同步aof
    no-appendfsync-on-rewrite yes
