@@ -89,86 +89,87 @@
 4. 复制多个/etc/rc.d/init.d/下脚本redis_6379、redis_6380
 5. 修改端口、pidfile
 
-# 2. 配置
-
-## 2.1 基本
-
-```shell
-#端口
-port 6379
-#守护进程
-daemonize no
-#
-requirepass abc
-#保护
-protected-mode no
-#pid文件
-pidfile /var/run/redis_6379.pid
-#数据库数量
-databases 16
-```
-
-
+# 2. 配置（redis.cfg）
 
 ## 2.1 网络
 
 ```shell
-#客户端闲置多长时间后关闭连接，如果指定为0，表示关闭该功能
-timeout 0
+bind 127.0.0.1
+protected-mode no
+port 6379
 #TCP接收队列长度，受/proc/sys/net/core/somaxconn和tcp_max_syn_backlog这两个内核参数的影响
 tcp-backlog 511
-#如果非零，则设置SO_KEEPALIVE选项来向空闲连接客户端发送ACK，用来定时向client发送tcp_ack包来探测client是否存活的
+#客户端闲置多长时间后关闭连接，如果指定为0，表示关闭该功能
+timeout 0
+#非零，则设置SO_KEEPALIVE选项来向空闲连接客户端发送ACK，用来定时向client发送tcp_ack包来探测client是否存活
 tcp-keepalive 300
 ```
 
 
 
-## 2.1 日志
+## 2.1 基本
 
-1. 服务器日志
+```shell
+#守护进程
+daemonize no
+#pid文件
+pidfile /var/run/redis_6379.pid
+#
+loglevel notice
+#
+logfile "/server/redis/logs/redis_6379.log"
+#数据库数量
+databases 16
+#
+always-show-logo yes
+```
 
-   - 编辑redis.conf，日志输出文件
 
-     ```shell
-     #输出目录
-     logfile "/server/redis/logs/redis_6379.log"
-     
-     #日志级别
-     #debug: 会打印出很多信息，适用于开发和测试阶段
-     #verbose: 冗长的，包含很多不太有用的信息，但比debug要清爽一些
-     #notice: 适用于生产模式
-     #warning: 警告信息
-     loglevel notice
-     ```
 
-2. 慢查询日志
+## 2.1 内存
 
-   - 编辑redis.conf，设置阈值，单位为微秒
+```shell
+#
+maxmemory 1024
+#
+maxmemory-policy
+#
+maxmemory-samples
+#
+replica-ignore-maxmemory yes
+```
 
-     ```shell
-     #等于0会记录所有命令；小于0对于任何命令都不会进行记录
-     slowlog-log-slower-than 0
-     
-     #慢查询日志最多存储多少条
-     slowlog-max-len 1000
-     ```
 
-   - 获取慢查询
 
-     ```shell
-     #
-     slowlog get [n]
-     #
-     slowlog len
-     #
-     slowlog reset
-     ```
+## 2.1 慢查询
+
+1. ```shell
+   #等于0会记录所有命令；小于0对于任何命令都不会进行记录
+   slowlog-log-slower-than 0
+   
+   #慢查询日志最多存储多少条
+   slowlog-max-len 1000
+   ```
+
+2. 获取慢查询
+
+   ```shell
+   #
+   slowlog get [n]
+   #
+   slowlog len
+   #
+   slowlog reset
+   ```
+
+   
+
 
 # 3. 持久化
 
 ## 3.1 RDB快照
 
-1. 配置
+1. 编辑redis.cfg，修改以下配置
 
    ```shell
    #### rdb开启 ###
@@ -200,7 +201,7 @@ tcp-keepalive 300
 
 ## 3.2 AOF追加
 
-1. 配置
+1. 编辑redis.cfg，修改以下配置
 
    ```shell
    ### aof开关 ###
@@ -224,7 +225,15 @@ tcp-keepalive 300
 
 
 
-# 1. 主从部署
+# 4. 主从部署
+
+
+
+
+
+
+
+# 
 
 # 1. 监控
 
