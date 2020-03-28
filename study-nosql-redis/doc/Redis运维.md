@@ -169,12 +169,18 @@ replica-ignore-maxmemory yes
 
 ## 3.1 RDB快照
 
+​		RDB 是 Redis 默认的持久化方案。在指定的时间间隔内，执行指定次数的写操作，则会将内存中的数据写入到磁盘中。即在指定目录下生成一个dump.rdb文件。
+
+​		Redis 重启会通过加载dump.rdb文件恢复数据
+
+### 3.1.1 配置
+
 ​		RDB 触发机制分为使用指令手动触发和 redis.conf 配置自动触发。
 
-1. 手动触发
+1. 手动触发，执行以下命令
 
    - save指令：该指令会阻塞当前 Redis 服务器，执行 save 指令期间，Redis 不能处理其他命令，直到 RDB 过程完成为止。
-   - bgsave：执行该命令时，Redis 会在后台异步执行快照操作，此时 Redis 仍然可以相应客户端请求。具体操作是 Redis 进程执行 `fork` 操作创建子进程，RDB 持久化过程由子进程负责，完成后自动结束。Redis 只会在 `fork` 期间发生阻塞，但是一般时间都很短。但是如果 Redis 数据量特别大，`fork` 时间就会变长，而且占用内存会加倍，这一点需要特别注意
+   - bgsave：执行该命令时，Redis 会在后台异步执行快照操作，此时 Redis 仍然可以相应客户端请求。
 
 2. 自动触发，编辑redis.cfg，修改以下配置
 
@@ -186,6 +192,9 @@ replica-ignore-maxmemory yes
    save 300 1000
    #60秒内，10000次写入，则产生快照
    save 60 10000
+   
+   ### rdb关闭 ###
+   save ""
    
    ### rdb配置 ###
    #后台备份进程出错时，主进程是否停止写入
@@ -200,25 +209,38 @@ replica-ignore-maxmemory yes
    dir ./
    ```
 
-3. 关闭RDB
+3. 注意
 
-   ```shell
-   save ""
-   ```
+   shutdown和flushall命令都会触发RDB快照，这是一个坑，请大家注意。还有其他命令：
+
+   - keys * 匹配数据库中所有 key
+   - save 阻塞触发RDB快照，使其备份数据
+   - flushall清空整个 Redis 服务器的数据（几乎不用）
+   - shutdown关机走人（很少用）
+
+### 3.1.2 恢复
+
+​		将dump.rdb 文件拷贝到redis的安装目录的bin目录下，重启redis服务即可。在实际开发中，一般会考虑到物理机硬盘损坏情况，选择备份dump.rdb 。
 
 ## 3.2 AOF追加
+
+### 3.2.1 配置
 
 1. 编辑redis.cfg，修改以下配置
 
    ```shell
    ### aof开关 ###
    appendonly no
+   #文件名
+   appendfilename "appendonly.aof"
    
    ### aof配置 ###
    #同步策略
    appendfsync always
    #正在导出rdb快照的过程中，是否停止同步aof
    no-appendfsync-on-rewrite yes
+   
+   ### 重写配置 ###
    #aof文件大小比起上次重写时的大小，增长率100%时，重写
    auto-aof-rewrite-percentage 100
    #aof文件，至少超过64M时，重写
@@ -230,7 +252,21 @@ replica-ignore-maxmemory yes
      - everysec：每秒写1次；折衷方案
      - no：写入工作交给操作系统，由操作系统判断缓冲区大小，统一写入到AOF； 同步频率低，速度快
 
+### 3.2.2 恢复
 
+​		正常情况下，将appendonly.aof 文件拷贝到redis的安装目录的bin目录下，重启redis服务即可。但在实际开发中，可能因为某些原因导致appendonly.aof 文件格式异常，从而导致数据还原失败，可以通过命令redis-check-aof --fix appendonly.aof 进行修复
+
+
+
+## 3.3 总结
+
+1. Redis 默认开启RDB持久化方式，在指定的时间间隔内，执行指定次数的写操作，则将内存中的数据写入到磁盘中。
+2. RDB 持久化适合大规模的数据恢复但它的数据一致性和完整性较差。
+3. Redis 需要手动开启AOF持久化方式，默认是每秒将写操作日志追加到AOF文件中。
+4. AOF 的数据完整性比RDB高，但记录内容多了，会影响数据恢复的效率。
+5. Redis 针对 AOF文件大的问题，提供重写的瘦身机制。
+6. 若只打算用Redis 做缓存，可以关闭持久化。
+7. 若打算使用Redis 的持久化。建议RDB和AOF都开启。其实RDB更适合做数据的备份，留一后手。AOF出问题了，还有RDB。
 
 # 4. 主从部署
 
@@ -240,7 +276,13 @@ replica-ignore-maxmemory yes
 
 
 
-# 
+# 1. 命令
+
+## 1.1 
+
+## 1.2
+
+## 1.3
 
 # 1. 监控
 
@@ -288,4 +330,3 @@ info [SECTION]
 ### 1.2.3 redis_exporter
 
 ​		配合Prometheus以及Grafana的Prometheus Redis插件，可以在Grafana进行可视化及监控
-
