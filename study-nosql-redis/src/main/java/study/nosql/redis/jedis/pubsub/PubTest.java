@@ -9,7 +9,7 @@ public class PubTest {
     @Test
     public void test() {
         Jedis jedis = JedisUtils.getJedis();
-        jedis.publish("TEST", "FDSAFADSFA");
+        jedis.publish("TEST", "111111111111111");
         jedis.close();
     }
 }
