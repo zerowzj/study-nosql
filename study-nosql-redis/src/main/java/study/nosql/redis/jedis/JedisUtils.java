@@ -5,7 +5,7 @@ import redis.clients.jedis.JedisPool;
 
 public class JedisUtils {
 
-    private static String host = "";
+    private static String host = "114.67.102.8";
 
     private static int port = 7379;
 
