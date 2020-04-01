@@ -2,7 +2,7 @@
 
 ## 1.1 编译
 
-1. 进入/redis5.0.8/src目录，执行下面命令
+1. 进入 redis5.0.8/src 目录，执行下面命令
 
    ```shell
    make PREFIX=/usr/server/redis5.0.8 install
@@ -17,12 +17,14 @@
    - redis-benchmark（用于redis性能测试）
    - redis-sentinel（集群管理）
 
-3. 配置位于目录/redis5.0.8下
+3. 配置位于目录 redis5.0.8 下
 
    - redis.conf
    - sentinel.conf
 
 ## 1.2 启停
+
+### 1.2.1 手动启停
 
 1. 启动
 
@@ -42,7 +44,7 @@
    redis-cli shutdown
    ```
 
-## 1.3 注册服务
+### 1.2.2 注册服务
 
 1. 编辑redis.conf文件
 
@@ -94,8 +96,11 @@
 ## 2.1 网络
 
 ```shell
+#
 bind 127.0.0.1
+#
 protected-mode no
+#
 port 6379
 #TCP接收队列长度，受/proc/sys/net/core/somaxconn和tcp_max_syn_backlog这两个内核参数的影响
 tcp-backlog 511
