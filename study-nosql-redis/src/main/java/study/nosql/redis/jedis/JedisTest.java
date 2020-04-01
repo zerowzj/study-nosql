@@ -9,5 +9,7 @@ public class JedisTest {
         jedis.set("Jedis:key:123", "Hello Work!");
         System.out.println(jedis.get("Jedis:key:123"));
         jedis.close();
+
+        jedis.incr("id");
     }
 }
