@@ -44,10 +44,10 @@ public class JedisLock {
                 //否则循环等待，在timeout时间内仍未获取到锁，则获取失败
                 long time = System.currentTimeMillis() - start;
                 if (time >= TIME_OUT) {
-                    log.info("id={} 超时退出对lock={}的竞争", identity, lock);
+                    log.info("id={} 超时退出对锁竞争 lock={}", identity, lock);
                     return false;
                 }
-                log.info("id={} 自旋后继续竞争 lock={}", identity, lock);
+                log.info("id={} 自旋后继续锁竞争 lock={}", identity, lock);
                 try {
                     TimeUnit.MILLISECONDS.sleep(100);
                 } catch (InterruptedException ex) {
