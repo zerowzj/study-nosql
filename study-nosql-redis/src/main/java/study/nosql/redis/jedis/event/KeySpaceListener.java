@@ -23,22 +23,22 @@ public class KeySpaceListener extends JedisPubSub {
     public void onUnsubscribe(String channel, int subscribedChannels) {
         log.info("订阅了{}", channel);
     }
-//
-//    /**
-//     * （★）模式发布订阅
-//     */
-//    @Override
-//    public void onPSubscribe(String pattern, int subscribedChannels) {
-//        log.info("ffffffffffffff");
-//    }
-//
-//    @Override
-//    public void onPMessage(String pattern, String channel, String message) {
-//        log.info("channel={}, message={}", channel, message);
-//    }
-//
-//    @Override
-//    public void onPUnsubscribe(String pattern, int subscribedChannels) {
-//        log.info("channel={}, message={}");
-//    }
+
+    /**
+     * （★）模式发布订阅
+     */
+    @Override
+    public void onPSubscribe(String pattern, int subscribedChannels) {
+        log.info("onPSubscribe");
+    }
+
+    @Override
+    public void onPMessage(String pattern, String channel, String message) {
+        log.info("onPMessage channel={}, message={}", channel, message);
+    }
+
+    @Override
+    public void onPUnsubscribe(String pattern, int subscribedChannels) {
+        log.info("onPUnsubscribe channel={}, message={}");
+    }
 }

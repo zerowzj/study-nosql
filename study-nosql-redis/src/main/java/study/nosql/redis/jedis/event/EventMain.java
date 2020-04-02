@@ -7,7 +7,8 @@ public class EventMain {
 
     public static void main(String[] args) {
         Jedis jedis = JedisUtils.getJedis();
-        jedis.subscribe(new KeySpaceListener(), "__keyspacke@0__:expired");
-        jedis.subscribe(new KeyEventListener(), "__keyevent@0__:expired");
+//        jedis.subscribe(new KeySpaceListener(), "__keyspace@0__:mykey");
+//        jedis.subscribe(new KeyEventListener(), "__keyevent@0__:expired");
+        jedis.psubscribe(new KeySpaceListener(), "__keyspace@0__:mykey");
     }
 }

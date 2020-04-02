@@ -14,4 +14,13 @@ public class EventTest {
         jedis.expire(key, 5);
         jedis.close();
     }
+
+    @Test
+    public void test1() {
+        String key = "mykey";
+        Jedis jedis = JedisUtils.getJedis();
+        jedis.set(key, "Hello Work!");
+        jedis.expire(key, 5);
+        jedis.close();
+    }
 }
