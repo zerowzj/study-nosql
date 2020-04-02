@@ -7,20 +7,34 @@
     <artifactId>study-nosql-redis</artifactId>
     <version>1.0</version>
 
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <jedis.version>3.2.0</jedis.version>
+        <redisson.version>3.12.4</redisson.version>
+    </properties>
+
     <dependencies>
         <!-- ==================== -->
-        <!-- （）-->
+        <!-- （★）Jedis          -->
         <!-- ==================== -->
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>2.9.0</version>
+            <version>${jedis.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.redislabs</groupId>
             <artifactId>jrebloom</artifactId>
             <version>1.0.1</version>
+        </dependency>
+        <!-- ==================== -->
+        <!-- （★）Redisson        -->
+        <!-- ==================== -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>${redisson.version}</version>
         </dependency>
 
         <dependency>
@@ -48,5 +62,6 @@
     </dependencies>
 
     <build>
+
     </build>
 </project>
