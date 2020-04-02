@@ -167,7 +167,8 @@ replica-ignore-maxmemory yes
    slowlog reset
    ```
 
-   
+
+## 2.1
 
 
 # 3. 持久化
