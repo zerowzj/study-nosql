@@ -1,8 +1,9 @@
-package study.nosql.redis.jedis;
+package study.nosql.redis.jedis.id;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
+import study.nosql.redis.jedis.JedisUtils;
 
 @Slf4j
 public class DistKey {
