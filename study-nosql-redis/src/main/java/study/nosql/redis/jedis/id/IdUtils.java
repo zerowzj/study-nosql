@@ -6,7 +6,11 @@ import redis.clients.jedis.Jedis;
 import study.nosql.redis.jedis.JedisUtils;
 
 @Slf4j
-public class DistKey {
+public class IdUtils {
+
+    public static long get() {
+        return 1;
+    }
 
     @Test
     public void test() {
