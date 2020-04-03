@@ -26,28 +26,28 @@ public class JedisLock {
     /**
      * 加锁
      *
-     * @param lock     锁
+     * @param lockKey  锁
      * @param identity 身份标识
      */
-    public boolean lock(String lock, String identity) {
+    public boolean lock(String lockKey, String identity) {
         Jedis jedis = JedisUtils.getJedis();
         Long start = System.currentTimeMillis();
         try {
             for (; ; ) {
                 //SET命令返回OK，则证明获取锁成功
-                String reply = jedis.set(lock, identity, PARAMS);
+                String reply = jedis.set(lockKey, identity, PARAMS);
                 if ("OK".equalsIgnoreCase(reply)) {
-                    log.info("id={} 获取到了锁 lock={}", identity, lock);
+                    log.info("id={} 获取到了锁 lock={}", identity, lockKey);
                     return true;
                 }
 
                 //否则循环等待，在timeout时间内仍未获取到锁，则获取失败
                 long time = System.currentTimeMillis() - start;
                 if (time >= TIME_OUT) {
-                    log.info("id={} 超时退出对锁竞争 lock={}", identity, lock);
+                    log.info("id={} 超时退出对锁竞争 lock={}", identity, lockKey);
                     return false;
                 }
-                log.info("id={} 自旋后继续锁竞争 lock={}", identity, lock);
+                log.info("id={} 自旋后继续锁竞争 lock={}", identity, lockKey);
                 try {
                     TimeUnit.MILLISECONDS.sleep(100);
                 } catch (InterruptedException ex) {
@@ -62,9 +62,10 @@ public class JedisLock {
     /**
      * 解锁
      *
+     * @param lockKey
      * @param identity
      */
-    public boolean unlock(String lock, String identity) {
+    public boolean unlock(String lockKey, String identity) {
         Jedis jedis = JedisUtils.getJedis();
         StringBuffer script = new StringBuffer();
 
@@ -74,11 +75,11 @@ public class JedisLock {
                 .append("   return 0 ")
                 .append("end");
         try {
-            List<String> keys = Collections.singletonList(lock);
+            List<String> keys = Collections.singletonList(lockKey);
             List<String> args = Collections.singletonList(identity);
             Object result = jedis.eval(script.toString(), keys, args);
             if ("1".equals(result.toString())) {
-                log.info("id={} 释放了锁 lock={}", identity, lock);
+                log.info("id={} 释放了锁 lock={}", identity, lockKey);
                 return true;
             }
             return false;
