@@ -7,7 +7,7 @@ import redis.clients.jedis.JedisPubSub;
 public class KeySpaceListener extends JedisPubSub {
 
     /**
-     * （★）具体发布订阅
+     * （★）具体
      */
     @Override
     public void onMessage(String channel, String message) {
@@ -25,7 +25,7 @@ public class KeySpaceListener extends JedisPubSub {
     }
 
     /**
-     * （★）模式发布订阅
+     * （★）模式
      */
     @Override
     public void onPSubscribe(String pattern, int subscribedChannels) {
