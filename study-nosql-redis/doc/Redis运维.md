@@ -289,13 +289,70 @@ replica-ignore-maxmemory yes
 6. 若只打算用Redis 做缓存，可以关闭持久化。
 7. 若打算使用Redis 的持久化。建议RDB和AOF都开启。其实RDB更适合做数据的备份，留一后手。AOF出问题了，还有RDB。
 
-# 四. 主从部署
+# 四. 主从
 
 ## 4.1 配置
 
-```
+​		主节点，无需特殊配置，只需要配置从节点。
 
-```
+### 4.1.1 命令
+
+​		这种方式一旦从节点重启，它与主节点之间的复制关系将终止。slaveof 命令用于在 Redis 运行时动态地修改复制功能的行为。
+
+​		通过执行 slaveof host port 命令，可以将当前服务器转变为指定服务器的从属服务器。如果当前服务器已经是某个主服务器的从属服务器，那么执行该命令将使当前服务器停止对旧主服务器的同步，丢弃旧数据集，转而开始对新主服务器进行同步。
+
+​		对一个从属服务器执行命令 slaveof no one 将使得这个从属服务器关闭复制功能，并从从属服务器转变回主服务器，原来同步所得的数据集*不会*被丢弃。利用这一特性，可以在主服务器失败的时候，将从属服务器用作新的主服务器，从而实现无间断运行。
+
+1. 登录客户端，使用命令
+
+   ```shell
+   #5.0之前版本
+   slaveof <masterip> <masterport>
+   #5.0及之后版本
+   replicaof <masterip> <masterport>
+   #
+   config set masterauth 123123
+   ```
+
+### 4.1.2 文件
+
+​		这种方式可以长期保证这两个服务器之间的主从关系
+
+1. 使用配置文件，编辑redis.conf，新增以下内容
+
+   ```shell
+   #5.0之前版本
+   slaveof <masterip> <masterport>
+   #5.0及之后版本
+   replicaof <masterip> <masterport>
+   #
+   masterauth 123123
+   ```
+
+   
+
+### 4.1.3 验证
+
+​		登录客户端，执行info replication
+
+1. 从节点
+
+   ```shell
+   role:slave
+   master_host:114.67.102.8
+   master_port:7379
+   master_link_status:up
+   ```
+
+2. 主节点
+
+   ```shell
+   role:master
+   connected_slaves:1
+   slave0:ip=114.67.102.8,port=7380,state=online,offset=224,lag=1
+   ```
+
+## 4.2 取消复制
 
 
 
@@ -305,9 +362,9 @@ replica-ignore-maxmemory yes
 
 ## 1.1 
 
-## 1.2
+## 1.2        
 
-## 1.3
+## 1.3 
 
 # 1. 监控
 
