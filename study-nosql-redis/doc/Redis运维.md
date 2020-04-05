@@ -295,7 +295,7 @@ replica-ignore-maxmemory yes
 
 ​		主节点，无需特殊配置，只需要配置从节点。
 
-### 4.1.1 命令
+### 4.1.1 命令配置
 
 ​		这种方式一旦从节点重启，它与主节点之间的复制关系将终止。slaveof 命令用于在 Redis 运行时动态地修改复制功能的行为。
 
@@ -311,10 +311,10 @@ replica-ignore-maxmemory yes
    #5.0及之后版本
    replicaof <masterip> <masterport>
    #
-   config set masterauth 123123
+   config set masterauth 666666
    ```
 
-### 4.1.2 文件
+### 4.1.2 文件配置
 
 ​		这种方式可以长期保证这两个服务器之间的主从关系
 
@@ -326,10 +326,9 @@ replica-ignore-maxmemory yes
    #5.0及之后版本
    replicaof <masterip> <masterport>
    #
-   masterauth 123123
+   masterauth 666666
    ```
 
-   
 
 ### 4.1.3 验证
 
@@ -352,21 +351,62 @@ replica-ignore-maxmemory yes
    slave0:ip=114.67.102.8,port=7380,state=online,offset=224,lag=1
    ```
 
-## 4.2 取消复制
+### 4.1.4 取消
+
+
+
+## 4.2 哨兵模式
+
+### 4.2.1 配置（sentinel.conf）
+
+```shell
+#哨兵进程端口
+port 26379
+daemonize no
+pidfile /var/run/redis-sentinel.pid
+
+logfile ""
+#哨兵进程服务临时文件夹，默认为/tmp，要保证有可写入的权限
+dir /tmp
+
+#配置监听的主服务器
+#mymaster代表服务器的名称，可以自定义，192.168.11.128代表监控的主服务器，6379代表端口，
+#2代表只有两个或两个以上的哨兵认为主服务器不可用的时候，才会进行failover操作
+sentinel monitor mymaster 192.168.11.128 6379 2
+#
+sentinel auth-pass <master-name> <password>
+#指定哨兵在监控Redis服务时，当Redis服务在一个默认毫秒数内都无法回答时，
+#单个哨兵认为的主观下线时间，默认为30000（30秒）
+sentinel down-after-milliseconds mymaster 30000
+#指定可以有多少个Redis服务同步新的主机，一般而言，这个数字越小同步时间越长，而越大，则对网络资源要求越高
+sentinel parallel-syncs mymaster 1
+#指定故障切换允许的毫秒数，超过这个时间，就认为故障切换失败，默认为3分钟
+sentinel failover-timeout mymaster 180000
+#指定sentinel检测到该监控的redis实例指向的实例异常时，调用的报警脚本。该配置项可选，比较常用
+sentinel deny-scripts-reconfig yes
+```
 
 
 
 
 
-# 1. 命令
+# 五. 集群
 
-## 1.1 
+## 5.1 配置
 
-## 1.2        
+### 5.1.1 集群配置
 
-## 1.3 
+5.1.2 主从配置
 
-# 1. 监控
+### 5.1.2 集群扩容
+
+1. 
+
+## 5.1 集群操作
+
+1. 
+
+# . 监控
 
 ## 1.1 命令监控
 
